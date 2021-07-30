@@ -3,7 +3,6 @@ plugins {
     id ("kotlin-android")
 }
 
-
 android {
     compileSdk =  Android.COMPILE_SDK
 
@@ -32,12 +31,32 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    externalNativeBuild {
+        cmake {
+            path = file("CMakeLists.txt")
+        }
+    }
 }
 
 dependencies {
 
-    implementation ("androidx.core:core-ktx:1.3.2")
-    implementation ("androidx.appcompat:appcompat:1.2.0")
+    implementation(project(Module.DOMAIN))
+    implementation (AndroidX.APP_COMPAT)
+    implementation (AndroidX.CORE_KTX)
+    implementation (AndroidX.LIFECYCLE)
+    implementation (ThirdParty.RETROFIT)
+    implementation (ThirdParty.GSON)
+    implementation (ThirdParty.OKHTTP)
+    implementation (ThirdParty.TIMBER)
+    implementation (ThirdParty.GSON_CONVERTER)
+    implementation (Hilt.HILT)
+
+
+
+
+
+
     implementation ("com.google.android.material:material:1.3.0")
     testImplementation ("junit:junit:4.+")
     androidTestImplementation ("androidx.test.ext:junit:1.1.2")
