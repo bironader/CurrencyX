@@ -1,16 +1,25 @@
 package com.bironader.currencyx.di
 
+import android.app.Application
+import android.content.Context
+import com.bironader.currencyx.BuildConfig
+import com.bironader.currencyx.Constants
+import com.bironader.currencyx.Keys
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.readystatesoftware.chuck.ChuckInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 
@@ -18,13 +27,13 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
 
-//    @Provides
-//    @Singleton
-//    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson) = Retrofit.Builder()
-//        .baseUrl(baseUrl)
-//        .client(okHttpClient)
-//        .addConverterFactory(GsonConverterFactory.create(gson))
-//        .build()
+    @Provides
+    @Singleton
+    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit = Retrofit.Builder()
+        .baseUrl(Keys.baseUrl())
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
 
 
     @Provides
@@ -36,17 +45,40 @@ class NetworkModule {
             .create()
     }
 
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        queryParamInterceptor: Interceptor,
+        chuckInterceptor: ChuckInterceptor
+    ): OkHttpClient {
+        val httpClientBuilder = OkHttpClient.Builder()
+        if (BuildConfig.DEBUG) {
+            httpClientBuilder.addInterceptor(chuckInterceptor)
 
-//        @Provides
-//    @Singleton
-//    fun provideHeaderInterceptor() = Interceptor { chain ->
-//        var request = chain.request()
-//        request = request.newBuilder()
-//            .addHeader(AUTHORIZATION, "$BEARER $token")
-//            .addHeader(ACCEPT, APP_JSON)
-//            .addHeader(CONTENT_TYPE, APPLICATION_X_WWWW_FORM)
-//            .build()
-//        Timber.d(request.headers.toString())
-//        chain.proceed(request)
-//    }
+        }
+        httpClientBuilder.addNetworkInterceptor(queryParamInterceptor)
+            .readTimeout(20, TimeUnit.SECONDS)
+            .connectTimeout(20, TimeUnit.SECONDS)
+
+        return httpClientBuilder.build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideChuckInterceptor(@ApplicationContext appContext: Context): ChuckInterceptor =
+        ChuckInterceptor(appContext)
+
+    @Provides
+    @Singleton
+    fun provideQueryParamInterceptor() = Interceptor { chain ->
+
+        val url = chain.request().url
+            .newBuilder()
+            .addQueryParameter(Constants.QueryKeys.ACCESS_KEY, Keys.apiKey())
+            .build()
+
+        val request = chain.request().newBuilder().url(url = url).build()
+        Timber.d(request.url.query.toString())
+        chain.proceed(request)
+    }
 }
