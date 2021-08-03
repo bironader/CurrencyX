@@ -1,5 +1,7 @@
+import org.gradle.internal.impldep.com.fasterxml.jackson.core.JsonPointer.compile
+
 plugins {
-    id ("kotlin")
+    id("kotlin")
 }
 buildscript {
     repositories {
@@ -7,6 +9,13 @@ buildscript {
 
     }
     dependencies {
-        classpath (Build.KOTLIN_PLUGIN)
+        classpath(Kotlin.KOTLIN_PLUGIN)
     }
+}
+dependencies {
+
+    implementation(Kotlin.COROUTINES) // need for flows
+    implementation("javax.inject:javax.inject:1")
+
+
 }
