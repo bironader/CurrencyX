@@ -6,4 +6,5 @@ object AndroidX {
 
     const val LIFECYCLE = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.LIFECYCLE_KTX}"
 
+    const val WORKER = "androidx.work:work-runtime-ktx:${Versions.WORKER}"
 }

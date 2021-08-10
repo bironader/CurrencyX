@@ -3,8 +3,10 @@ package com.bironader.currencyx
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -17,20 +19,25 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bironader.currencyx.ui.nav.Screen
-import com.bironader.currencyx.ui.screens.CurrencyExchangeContent
 import com.bironader.currencyx.ui.screens.CurrencyExchangeViewModel
+import com.bironader.currencyx.ui.screens.CurrencyInputContent
+import com.bironader.currencyx.ui.screens.ExchangeListContent
 import com.bironader.currencyx.ui.theme.CurrencyxTheme
 import com.bironader.currencyx.ui.widgets.CurrencyAppBar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
 
-
+@ExperimentalFoundationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val exampleViewModel: CurrencyExchangeViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+
         setContent {
             CurrencyxTheme {
                 Scaffold(
@@ -41,8 +48,7 @@ class MainActivity : ComponentActivity() {
                             startDestination = Screen.CurrencyExchange.route
                         )
                         {
-                            composable(route = Screen.CurrencyExchange.route)
-                            {
+                            composable(route = Screen.CurrencyExchange.route) {
                                 CurrencyExchangeScreen()
                             }
                         }
@@ -57,15 +63,30 @@ class MainActivity : ComponentActivity() {
 }
 
 
+@ExperimentalFoundationApi
 @Composable
 fun CurrencyExchangeScreen(viewModel: CurrencyExchangeViewModel = hiltViewModel()) {
-    val uiState = viewModel.uiStates.collectAsState()
 
-    CurrencyExchangeContent(
+    val amount = viewModel.amount.collectAsState()
+
+    Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 8.dp, end = 8.dp, top = 16.dp),
-        uiState
-    )
+            .fillMaxWidth()
+            .padding(start = 8.dp, end = 8.dp, top = 16.dp)
+    ) {
+        CurrencyInputContent(
+            uiState = viewModel.inputUiState.collectAsState(),
+            onSelectSource = { viewModel.onSelectSource(it) },
+            selectedSource = viewModel.selectedSource.collectAsState(),
+            onAmountChange = { viewModel.onAmountChange(it) },
+            amount = amount
+        )
+
+        ExchangeListContent(
+            uiState = viewModel.exchangeUiState.collectAsState()
+            , amount = amount)
+    }
+
+
 }
 

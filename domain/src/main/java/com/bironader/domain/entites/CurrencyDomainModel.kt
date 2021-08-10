@@ -1,3 +1,3 @@
 package com.bironader.domain.entites
 
-data class CurrencyDomainModel(val currencies: Map<String, String>)
+data class CurrencyDomainModel(var countryName: String, var key: String)

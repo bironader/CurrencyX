@@ -5,6 +5,7 @@ interface Constants {
     interface QueryKeys{
         companion object {
             const val ACCESS_KEY = "access_key"
+            const val SOURCE = "source"
         }
     }
 

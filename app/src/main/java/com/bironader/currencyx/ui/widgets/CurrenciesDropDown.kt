@@ -8,28 +8,33 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.bironader.domain.entites.CurrencyDomainModel
 import timber.log.Timber
 
 @Composable
 fun CurrenciesDropDown(
     modifier: Modifier = Modifier,
     expanded: Boolean = false,
-    data: Map<String, String>,
-//    onCurrencySelected: (Pair<String, String>) -> Unit = Unit
+    data: List<CurrencyDomainModel>,
+    onSelectSource: (CurrencyDomainModel) -> Unit,
+    selectedSource: State<CurrencyDomainModel>
 ) {
-    var selectedText by remember { mutableStateOf(data["USD"]) }
-    var isExpanded by remember { mutableStateOf(expanded) }
 
+
+    var isExpanded by remember { mutableStateOf(expanded) }
+    onSelectSource(selectedSource.value)
     Box(modifier = modifier.clickable { isExpanded = !isExpanded }) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.small)
                 .border(2.dp, MaterialTheme.colors.secondary)
@@ -38,11 +43,9 @@ fun CurrenciesDropDown(
             verticalAlignment = CenterVertically
         ) {
 
-            selectedText?.let {
-                Text(
-                    text = it,
-                )
-            }
+            Text(
+                text = "(${selectedSource.value.key}) ${selectedSource.value.countryName}"
+            )
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,
                 contentDescription = "",
@@ -50,22 +53,19 @@ fun CurrenciesDropDown(
             )
         }
         DropdownMenu(
-            modifier = modifier.fillMaxWidth()
-                .fillMaxHeight(),
             expanded = isExpanded,
             onDismissRequest = { isExpanded = false }
         ) {
 
-            data.forEach { (key, value) ->
-                DropdownMenuItem(onClick = {
-                    selectedText = value
+            data.forEach { item ->
+                DropdownMenuItem(modifier = Modifier.fillMaxWidth(), onClick = {
                     isExpanded = !isExpanded
-//                    onCurrencySelected(Pair(key, value))
+                    onSelectSource(item)
                 }) {
-                    Text(text = value)
+                    Text(text = "(${item.key}) ${item.countryName}")
                 }
+                Divider()
             }
-
         }
     }
 }

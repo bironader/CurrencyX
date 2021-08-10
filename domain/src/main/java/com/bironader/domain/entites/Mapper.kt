@@ -1,8 +1,12 @@
 package com.bironader.domain.entites
 
-interface Mapper<Entity, DomainModel> {
+interface Mapper<RemoteModel, LocalEntityModel ,DomainModel> {
 
-    fun mapFromEntity(entity: Entity): DomainModel
+    fun mapFromRemoteModel(remoteModel: RemoteModel): DomainModel
 
-    fun mapToEntity(domainModel: DomainModel): Entity
+    fun mapFromEntityModel(entityModel: LocalEntityModel) : DomainModel
+
+    fun mapToLocalEntityModel(domainModel: DomainModel): LocalEntityModel
+
+
 }

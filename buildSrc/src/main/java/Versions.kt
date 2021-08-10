@@ -20,5 +20,6 @@ object Versions {
     const val COROUTINES = "1.3.0"
     const val ROOM = "2.3.0"
     const val HILT_NAVIGATION = "1.0.0-alpha03"
+    const val WORKER = "2.5.0"
 
 }

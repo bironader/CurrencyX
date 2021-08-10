@@ -60,6 +60,7 @@ dependencies {
     implementation(AndroidX.APP_COMPAT)
     implementation(AndroidX.CORE_KTX)
     implementation(AndroidX.LIFECYCLE)
+    implementation (AndroidX.WORKER)
 
     implementation(ThirdParty.RETROFIT)
     implementation(ThirdParty.GSON)
@@ -67,11 +68,15 @@ dependencies {
     implementation(ThirdParty.TIMBER)
     implementation(ThirdParty.GSON_CONVERTER)
 
+
     implementation(Google.MATERIAL)
 
     implementation(Hilt.HILT)
     kapt(Hilt.HILT_COMPILER)
+    implementation("androidx.hilt:hilt-work:1.0.0")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
 
+    
     implementation(Compose.ACTIVITY)
     implementation(Compose.FOUNDATION)
     implementation(Compose.VIEW_MODEL)
@@ -83,7 +88,7 @@ dependencies {
     implementation(Compose.TOOLING)
     implementation(Compose.HILT_NAVIGATION)
 
-
+    implementation(Room.KTX)
     implementation(Room.ANDROID)
     implementation(Room.COROUTINES)
     annotationProcessor(Room.COMPILER)
