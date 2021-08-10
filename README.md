@@ -10,9 +10,9 @@ Currency exchange rate application
 - MVI as ui pattern and LiveData
 - [Coroutines](https://developer.android.com/kotlin/coroutines)
 - [Flow](https://developer.android.com/kotlin/flow)
-- [Compose Ui] (https://developer.android.com/jetpack/compose)
+- [Compose Ui](https://developer.android.com/jetpack/compose)
 
 ## How to run it 
 - Use API Access Key for using the API from https://currencylayer.com/documentation 
-- Open native.cpp file and inject your api key note that the free key will fetch only the USD rates
+- Open [native.cpp](https://github.com/bironader/CurrencyX/blob/master/app/src/main/cpp/native-lib.cpp) file and inject your api key note that the free key will fetch only the USD rates
 
