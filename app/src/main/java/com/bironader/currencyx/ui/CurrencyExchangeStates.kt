@@ -15,6 +15,7 @@ sealed class ExchangeStatesViewState {
     object None : ExchangeStatesViewState()
     object Loading : ExchangeStatesViewState()
     data class Error(var throwable: Throwable) : ExchangeStatesViewState()
+    object  EmptyRates : ExchangeStatesViewState()
     data class ExchangeRatesFetched(val data: List<ExchangeDomainModel>) : ExchangeStatesViewState()
 }
 

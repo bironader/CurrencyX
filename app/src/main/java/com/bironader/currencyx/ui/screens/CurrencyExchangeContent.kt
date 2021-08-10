@@ -1,5 +1,6 @@
 package com.bironader.currencyx.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
@@ -38,9 +40,6 @@ fun CurrencyInputContent(
         modifier = modifier,
     ) {
         when (val uiStateValue = uiState.value) {
-            is CurrencyViewState.Loading -> {
-                Loading()
-            }
             is CurrencyViewState.CurrenciesFetched -> {
                 CurrencyInput(
                     currencies = uiStateValue.data,
@@ -118,8 +117,11 @@ fun ExchangeListContent(
                     }
                 })
             }
-            is ExchangeStatesViewState.Loading -> {
-                Loading()
+
+            is ExchangeStatesViewState.EmptyRates -> {
+                Toast.makeText(LocalContext.current, "No rates available check your api key ", Toast.LENGTH_SHORT)
+                    .show()
+
             }
         }
     }
@@ -148,8 +150,4 @@ fun ExchangeRateItem(item: ExchangeDomainModel, amount: String) {
 
 }
 
-@Composable
-fun Loading() {
-    CircularProgressIndicator(color = Color.Black)
-}
 

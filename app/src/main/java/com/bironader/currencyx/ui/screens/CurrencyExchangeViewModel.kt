@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -38,6 +39,7 @@ class CurrencyExchangeViewModel @Inject constructor(private val currencyUseCase:
                     inputUiState.value = CurrencyViewState.Loading
                 }
                 .catch {
+                    Timber.d(it)
                     inputUiState.value = CurrencyViewState.Error(it)
                 }
                 .collect {
@@ -52,11 +54,18 @@ class CurrencyExchangeViewModel @Inject constructor(private val currencyUseCase:
         viewModelScope.launch(Dispatchers.IO) {
             selectedSource.onStart {
                 exchangeUiState.value = ExchangeStatesViewState.Loading
-            }.flatMapMerge {
-                currencyUseCase.fetchExchangeFromLocal(it.key).onStart {
-                    exchangeUiState.value = ExchangeStatesViewState.Loading
-                }
+            }.flatMapLatest { currencyModel ->
+                currencyUseCase.fetchExchangeFromLocal(currencyModel.key)
+            }.catch { throwable ->
+                Timber.d(throwable)
+                exchangeUiState.value = ExchangeStatesViewState.Error(throwable)
+            }.onStart {
+                exchangeUiState.value = ExchangeStatesViewState.Loading
             }.collect {
+                if (it.isEmpty()) {
+                    exchangeUiState.value = ExchangeStatesViewState.EmptyRates
+                    return@collect
+                }
                 exchangeUiState.value = ExchangeStatesViewState.ExchangeRatesFetched(it)
 
             }
