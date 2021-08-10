@@ -8,7 +8,7 @@
 extern "C" JNIEXPORT jstring
 JNICALL
 Java_com_bironader_currencyx_Keys_apiKey(JNIEnv *env, jobject object) {
-    std::string api_key = "3beecec34ad1d5e58f2411ce7d760eab";
+    std::string api_key = "REPLACE_YOUR_API_KEY";
     return env->NewStringUTF(api_key.c_str());
 }
 
